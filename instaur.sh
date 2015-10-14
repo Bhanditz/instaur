@@ -309,7 +309,7 @@ function post {
 
 # exec < /dev/tty			# Why did I think this was necessary again?
 
-# Initialize (some are "just in case" things added while debugging)
+# Initialize
 i=0
 j=0
 k=0
