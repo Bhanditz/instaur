@@ -8,6 +8,10 @@ Instaur is in early alpha testing stages and has a lot of desperately needed upc
 
 Instaur is a command line utility made for Arch Linux to install AUR packages. Instaur is intended to be used instead of a more automated AUR package installer such as Yaourt or Pacaur in order to put individualized package control back in the hands of the user while still automating the installation process. It only auto-installs dependencies that are found by pacman in the official repositories. Any package or dependency that is in AUR must be explicitly specified by the user in order for it to be installed. Prior to installing packages, Instaur notifies the user which dependencies may need to be updated manually.
 
+## Installation
+
+```# sh install.sh```
+
 ## Usage
 
 This documentation is no longer up to date with the latest features of Instaur. Most pacman options and operations should have some level of compatibility with Instaur. However, only the following are officially supported.
