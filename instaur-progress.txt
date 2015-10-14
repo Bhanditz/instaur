@@ -1,0 +1,139 @@
+Dependencies:
+curl
+package-query
+pacman
+sudo
+
+Features to add:
+- Create PKGBUILD for instaur to install instaur as arch package rather than manual install.
+- Parse or run limited PKGBUILDs, read /etc/makepkg.conf for variables such as CARCH
+- Search AUR, checkout pacaur's options
+- Enhance pacman operation/option recognition: first operation loop, then option loop
+- Comprehensive and concise logs:
+  /var/instaur-comprehensive.log - every command and result ever
+  /var/instaur-concise.log - only up to date packages
+- Improve help page, turn into man page, create shorter help page...?
+- Automatic Dependency Handling Possibilities:
+	* Check state of all AUR packages in instaur.log (up to date?), also remove any dead log listings (packages uninstalled with pacman)
+	* --auto option: automatically and recursively install any AUR dependencies needed OR simply make InstAUR always automatically check dependency versions to see if they are up to date.
+	* -Syu?
+- pacman -Qm:
+	remove log that isn't there
+	crossmatch Qm items not in log against AUR, add to log if present in AUR with time=unknown
+	check each one at AUR for -Ayu
+- package-query for -s
+
+Known bugs:
+- When makepkg has to pacman -S something, it asks sudo, so with auto dep management make sure it installs before makepkg is run.
+- PKGBUILD version number set via variable, instaur displays variable name instead of version number
+- instaur.log keeps pacman uninstalled packages (disabled uninstall rm feature, must check whether pacman -R worked)
+- sometimes asks for sudo -u user password when already in root. wtf?
+
+Non-bug stability concerns:
+- Ensure variables are being treated safely: initialization, resetting, quotation marks, conditional/loop brackets
+- Prevent instaur from instauring itself (will become necessary when instaur is added to AUR).
+
+
+== PACMAN OPTIONS ==
+Nothing that reads next argument works unless entire commend is passed to pacman.
+Options: Nothing tested except:
+	--noconfirm: Works both with instaur and it is passed to pacman.
+Transaction: With -U or -R, all is passed, with -S, nothing tested.
+Upgrade: With -U, all is passed, with -S, nothing tested except:
+	--needed: Works both with instaur and it is passed to pacman.
+-Q: Passed to pacman unchanged, no need to ever change this behavior
+-R: Passed to pacman unchanged, should improve eventually
+-S: None, pass to pacman and do the following for aur:
+	-c: (fakesync) clean /tmp, clean instaur.log
+	-g: (fakesync) do groups even exist in aur?
+	-i: (sync) read from pkgbuild or aur webpage
+	-l: (fakesync) list everything in AUR? no way...
+	-s: Works, instaur -Ss searches AUR and repos combined (like package-query -ASs)
+	-u: (sync) populate list before going into sync loop
+	-w: (sync)
+	-y: (sync) unnecessary for AUR, pass only
+
+
+CHANGE LOG
+0.9.0 [2015]
+Features Added:
+- Create and use instaur user and group to avoid password prompts for --noconfirm and avoid necessity for non-root user to already exist. (functionality & stability)
+	Delete then add these on every install (install.sh).
+	Remove finduser function (instaur-lib.sh).
+	Stop using finduser function, set curuser=instaur to run all de-elevated commands with instaur user (instaur.sh).
+- install.sh: Create gpg config for instaur user and enable automatic key retrieval (stability)
+Bugfixes:
+- Remove *$cvnum from pacman -U to fix git installations.
+- cvnum package-query -A instead of -AS to prevent version confusion
+- Switch makepkg -si back to makepkg -s && pacman -U $p-$cvnum*tar.xz now that version confusion is fixed.
+
+0.8.1 [2015-07-30]
+Bugfixes:
+- Updated to AUR4
+	replace two urls in instaur-lib.sh for package download
+	added --aur-url https://aur4.archlinux.org for package-query
+- Changed install.sh path to BASEDIR=$(dirname $0)
+- Use makepkg -si instead of makepkg -s && pacman -U $p-$cvnum*tar.xz
+- Are you sure? and Delete installation? now (intentionally and properly) favor yes.
+- Comment out instaur.log.bak crap
+
+0.8.0 [2015-07-02]
+Features added:
+- Switched pacman -U *xz to pacman -U $p-$cvnum*tar.xz
+- Read arguments more explicitly (new loop inspired by my own jwmmmaker script). (stability & functionality)
+- More comprehensive pacman argument support. (functionality) - [perpetually in progress]
+- pacman -Q && package-query -AS for versions check (stability & performance)
+- Download PKGBUILD directly instead of tarball for dependency check (stability & performance)
+Bugfixes:
+- Stopped asking confirmation or mentioning dependencies when package can't be found.
+- Fix --needed for new installation style.
+- Version number check switched from $() to backticks (only fix for how it displays in text editor)
+
+Defunct/unnecessary bugfix lost between versions: Fix new PKGBUILD version reading protocol by properly incorperating pkgrel. (defunct)
+
+0.7.0 [2014-10-27]
+Features added:
+- Check dependencies and version from file in tarball instead of AUR website. (stability)
+- Functions restructured to accomplish the above (eg. download tarball earlier)
+- Install instaur with install.sh (usability)
+- NEW LOCATIONS: (stability)
+  /usr/bin/instaur
+  /usr/lib/instaur-lib.sh
+  /usr/doc/instaur-help.txt
+  /var/instaur.log
+  /tmp/instaur.log.bak
+  /tmp/instaur.log.bak.old
+  /tmp/instaur.tmp
+  /tmp/instaur-pacman.log
+Bugfixes:
+- Fixed permission errors associated with going back and forth between root and user for mkdir and makepkg.
+
+
+0.6.0
+Features added:
+- Got rid of pacman -Qi error: package '' was not found via 2>/dev/null (usability)
+- Reorganize entire script into two files: instaur-functions.sh and instaur.sh (currently dni.sh) calls functions
+- Crossmatch local dependencies against online dependencies (stability)
+- Improve user dialog, require fewer confirmations. (usability)
+Bugfixes:
+- Can now run script as root (fakeroot makepkg via sudo -u via finduser function), --noconfirm is now truly no confirmations.
+
+0.5.0
+Features added:
+- -R operation: Uninstall package and remove from log. (functionality)
+- Combine version number and dependency search into single download. (performance)
+- Use same dependency search for pre-install and log file. (performance)
+- Create instaur.log file with column titles if non-existent. (functionality)
+Bugfixes:
+- Can now find dependencies for fresh installations (search AUR | pacman -Ss) :instead of: (pacman -Qi | pacman -Ss) (stability)
+
+0.4.0
+Features added:
+- Integrate options into InstAUR: --noconfirm --help --needed. (functionality)
+- Pass any pacman options (untested: use at own risk). (functionality)
+- For loop entire code to install multiple packages. (functionality)
+Bugfixes:
+- sudo -v at beginning to cache for later use (not ideal, but should improve --noconfirm). (stability)
+
+0.1.0 (10/1) - 0.3.0 (10/6)
+not recorded
