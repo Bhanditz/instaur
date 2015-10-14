@@ -2,7 +2,7 @@
 AUR helper for Arch Linux
 
 ## DISCLAIMER
-Instaur is in early alpha testing stages and has a lot of upcoming changes. In my experience it works well, but it has only been tested on my devices. Instaur is unique in that it runs as root. An Instaur user is created during installation to execute the makepkg command without root privileges. This functionality is experimental and subject to change. It functions in this manner in order to create a user experience as similar to that of pacman as possible. Use at your own risk.
+Instaur is in early alpha testing stages and has a lot of desperately needed upcoming changes (see instaur-progress.txt for more details). In my experience it works, but it has only been tested on my devices. I use it for almost all AUR packages and rarely have a problem. Instaur is unique in that it runs as root. An instaur user is created during installation to execute the makepkg command without root privileges. This functionality is experimental and subject to change. It functions in this manner in order to create a user experience as similar to that of pacman as possible. Use at your own risk.
 
 ## Description
 
