@@ -1,5 +1,5 @@
 # ========================   InstAUR 0.9.0   ========================= #
-# ==================   Copyright 2014 Drew Nutter   ================== #
+# ==================   Copyright 2015 Drew Nutter   ================== #
 #                                                                      #
 # This program is free software: you can redistribute it and/or modify #
 # it under the terms of the GNU General Public License as published by #

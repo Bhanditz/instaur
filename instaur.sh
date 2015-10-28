@@ -136,7 +136,7 @@ fi
 }
 
 function versions {
-	cvnum=`package-query -A $p | awk '{print $2}'`
+	cvnum=`package-query --aur-url https://aur4.archlinux.org -A $p | awk '{print $2}'`
 	ivnum=`(pacman -Q $p 2> /dev/null) | awk '{print $2}'`
 }
 
@@ -171,7 +171,7 @@ function downverdeps {
 	# This function downloads the package and identifies dependencies and versions
 	versions
 	rm -rf /tmp/instaur/PKGBUILDs
-	sudo -u $curuser curl -Ss https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$p > /tmp/instaur/PKGBUILD
+	sudo -u $curuser curl -Ss https://aur4.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$p > /tmp/instaur/PKGBUILD
 	bigdeplist=$(pkgbuilddeps)
 	c=0
 	for onedep in $bigdeplist
@@ -269,10 +269,8 @@ function UpgradeCheck {
 
 
 function buildinstall {
-	mkdir /tmp/instaur 2> /dev/null # Have this ready to fill
 	cd /tmp/instaur
-	curl -Ss https://aur.archlinux.org/cgit/aur.git/snapshot/$p.tar.gz | tar zx
-	chown -R instaur /tmp/instaur
+	sudo -u $curuser curl -Ss https://aur4.archlinux.org/cgit/aur.git/snapshot/$p.tar.gz | sudo -u $curuser tar zx
 	cd $p && (sudo -u $curuser makepkg -s 2>&1) | tee /tmp/instaur-pacman.log
 	echo "$pacopt"
 	(pacman -U $pacopt $p*tar.xz 2>&1) | tee /tmp/instaur-pacman.log
@@ -311,7 +309,7 @@ function post {
 
 # exec < /dev/tty			# Why did I think this was necessary again?
 
-# Initialize (some are "just in case" things added while debugging)
+# Initialize
 i=0
 j=0
 k=0
@@ -327,6 +325,7 @@ numpkg=0
 #finduser		# Determine non-root user initiating install
 curuser=instaur
 arguments2 $@	# This gives us option states plus the pkg[] array
+sudo -u $curuser mkdir /tmp/instaur 2> /dev/null # Have this ready to fill
 
 whoiam=$(whoami)
 # Check and demand root

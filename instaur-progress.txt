@@ -5,7 +5,8 @@ pacman
 sudo
 
 Features to add:
-- run pkgbuild script, read /etc/makepkg.conf for variables such as CARCH
+- Create PKGBUILD for instaur to install instaur as arch package rather than manual install.
+- Parse or run limited PKGBUILDs, read /etc/makepkg.conf for variables such as CARCH
 - Search AUR, checkout pacaur's options
 - Enhance pacman operation/option recognition: first operation loop, then option loop
 - Comprehensive and concise logs:
